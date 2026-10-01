@@ -1,54 +1,45 @@
-"use client";
-
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import css from "./Modal.module.css";
+// import type { PostNote } from '../../types/note';
 
-export default function Modal({
-  isOpen,
-  onClose,
-  title,
-  children,
-}: {
-  isOpen: boolean;
+interface ModalProps {
   onClose: () => void;
-  title: string;
-  children: ReactNode;
-}) {
-  useEffect(() => {
-    if (!isOpen) return;
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
+  // onSubmit: (note: PostNote) => void;
+  children: React.ReactNode;
+}
+
+export default function Modal({ onClose, children }: ModalProps) {
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
     }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  };
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
 
-  return (
+    document.addEventListener("keydown", handleEscape);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "visible";
+    };
+  }, [onClose]);
+
+  return createPortal(
     <div
       className={css.backdrop}
-      onMouseDown={(event) => event.target === event.currentTarget && onClose()}
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
     >
-      <section
-        className={css.dialog}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="note-dialog-title"
-      >
-        <div className={css.header}>
-          <h2 id="note-dialog-title">{title}</h2>
-          <button
-            className={css.close}
-            type="button"
-            onClick={onClose}
-            aria-label="Close dialog"
-          >
-            ×
-          </button>
-        </div>
-        {children}
-      </section>
-    </div>
+      <div className={css.modal}>{children}</div>
+    </div>,
+    document.body,
   );
 }

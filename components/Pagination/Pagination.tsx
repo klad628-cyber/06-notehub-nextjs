@@ -1,35 +1,31 @@
+import ReactPaginateModule from "react-paginate";
+import ReactPaginate from "react-paginate";
+import type { ReactPaginateProps } from "react-paginate";
+
 import css from "./Pagination.module.css";
 
+interface PaginationProps {
+  pageCount: number;
+  onPageChange: (selectedItem: { selected: number }) => void;
+  forcePage: number;
+}
+
 export default function Pagination({
-  page,
-  totalPages,
+  pageCount,
   onPageChange,
-}: {
-  page: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}) {
+  forcePage,
+}: PaginationProps) {
   return (
-    <nav className={css.pagination} aria-label="Notes pages">
-      <button
-        type="button"
-        onClick={() => onPageChange(page - 1)}
-        disabled={page <= 1}
-        aria-label="Previous page"
-      >
-        ←
-      </button>
-      <span>
-        <strong>{page}</strong> / {totalPages}
-      </span>
-      <button
-        type="button"
-        onClick={() => onPageChange(page + 1)}
-        disabled={page >= totalPages}
-        aria-label="Next page"
-      >
-        →
-      </button>
-    </nav>
+    <ReactPaginate
+      pageCount={pageCount}
+      onPageChange={onPageChange}
+      pageRangeDisplayed={5}
+      nextLabel="→"
+      previousLabel="←"
+      activeClassName={css.active}
+      containerClassName={css.pagination}
+      marginPagesDisplayed={1}
+      forcePage={forcePage}
+    />
   );
 }

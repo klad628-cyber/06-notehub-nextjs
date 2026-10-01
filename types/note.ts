@@ -1,28 +1,16 @@
-export type NoteTag =
-  "Todo" | "Work" | "Personal" | "Meeting" | "Shopping" | "Ideas";
-
 export interface Note {
   id: string;
   title: string;
   content: string;
-  tag: NoteTag;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt: string;
+  tag: TagProps;
 }
 
-export interface NoteDraft {
+export interface PostNote {
   title: string;
   content: string;
-  tag: NoteTag;
+  tag: TagProps;
 }
 
-export interface FetchNotesParams {
-  search?: string;
-  page?: number;
-  perPage?: number;
-}
-
-export interface FetchNotesResponse {
-  notes: Note[];
-  totalPages: number;
-}
+export type TagProps = "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
